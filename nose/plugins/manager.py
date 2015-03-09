@@ -329,6 +329,14 @@ class ZeroNinePlugin:
             if not hasattr(self.plugin, 'addDeprecated'):
                 return
             return self.plugin.addDeprecated(test.test)
+
+        # Ensure that if we error out in a method that is _not_ a test method
+        # (e.g., in the setUp or setUpClass method), we don't blow up and still
+        # show the error. The capturedOutput attr will not have been set if we
+        # error out during setUp
+        if not (hasattr(test, "capturedOutput") and hasattr(test, "test")):
+            return self.plugin.addError(test, err)
+
         # add capt
         capt = test.capturedOutput
         return self.plugin.addError(test.test, err, capt)
