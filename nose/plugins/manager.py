@@ -334,8 +334,11 @@ class ZeroNinePlugin:
         # (e.g., in the setUp or setUpClass method), we don't blow up and still
         # show the error. The capturedOutput attr will not have been set if we
         # error out during setUp
-        if not (hasattr(test, "capturedOutput") and hasattr(test, "test")):
-            return self.plugin.addError(test, err)
+        if not hasattr(test, "capturedOutput"):
+            if hasattr(test, "test"):
+                return self.plugin.addError(test.test, err)
+            else:
+                return self.plugin.addError(test, err)
 
         # add capt
         capt = test.capturedOutput
